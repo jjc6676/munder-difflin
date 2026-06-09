@@ -18,45 +18,46 @@
 
 | # | Feature | Bucket | One-liner |
 |---|---|---|---|
-| 1 | Office DVR — instant replay & timeline scrubber | ✨ | Scrub the whole floor backward like a DVR; see what every agent did at any second. |
+| 1 | Ask-the-Office | 🪑✨ | One plain-English search bar over every agent's memory, the event log, and the cost ledger — with clickable provenance. |
 | 2 | Team Templates ("Org Charts") | 🪑 | Save a whole roster + repos + prompts and re-spawn the team in one click. |
 | 3 | Drag-to-Assign on the floor | 🪑 | Drag an issue, a task card, or a file onto an avatar to give it the work. |
 | 4 | The Office Cast — persona presets | 🪑✨ | One-click personalities (Dwight the bug-hunter, Oscar the reviewer) that are really tuned prompt+model+guardrail bundles. |
-| 5 | Daily Standup & End-of-Day digest | 🪑✨ | GOD writes a plain-English "here's what the office did" summary on a schedule. |
-| 6 | Plain-language guardrails | 🪑 | Type "don't spend more than $5 today, never force-push" and it compiles to real breaker rules. |
+| 5 | Hiring Fair — auto-staffing | 🪑✨ | Describe the job in one line; GOD proposes who to hire, with what models and budgets, and you approve. |
+| 6 | Memory Inspector | 🪑✨ | Browse, pin, correct, and forget what an agent knows — teach it instead of hoping. |
 | 7 | Conflict Huddle — collision detection | 🪑✨ | When two agents touch the same files, they're pulled into a huddle to reconcile before they clobber each other. |
-| 8 | Pocket Office — remote approvals & dispatch | 🪑 | Approve escalations and dispatch work from your phone via the ingress we already run. |
-| 9 | Voice dispatch — "Hey Michael…" | 🪑✨ | Hands-free, talk to the GOD orchestrator and watch the floor react. |
-| 10 | Office Cam — shareable replay export | ✨ | Export a sped-up clip of your agents working — a built-in viral loop. |
+| 8 | Spend Forecast | 🪑 | See the estimated bill before you commit, then watch a live burn-down flag drift early. |
+| 9 | Autopilot Dial | 🪑 | One Observe / Assist / Autopilot control for how much the office decides on its own. |
+| 10 | Suggestion Box | ✨ | Idle agents file vetted, opt-in improvements you triage with a tap — nothing acts unprompted. |
 
 ---
 
-## 1. Office DVR — instant replay & timeline scrubber ✨
+## 1. Ask-the-Office — one search bar over everything the office knows 🪑✨
 
-**What it is.** A scrubber bar under the floor that lets you drag time backward
-and watch the office re-animate: avatars walk back to old stations, envelopes
-un-fly, tool bubbles reappear. Click any moment to see the exact roster state,
-who held which task, and what the blackboard said. "Jump to" markers for
-escalations, breaker trips, and task completions.
+**What it is.** A global command-palette **Ask** box that answers plain-English
+questions across every agent's long-term memory, the append-only event log, the
+blackboard, and the cost ledger at once: *"Who touched the auth module yesterday
+and why?"* · *"What did Dwight learn about the flaky tests?"* · *"Where did we
+spend the most this week?"* Answers come back with **clickable provenance** —
+which agent, which event, which file — so you can jump straight to the source.
 
-**Why clients love it (🪑).** The single hardest question with autonomous agents
-is *"wait, what just happened?"* Today you reconstruct it from logs. The DVR
-turns that into a drag of the mouse. When an agent does something surprising at
-3am, you scrub to it in seconds instead of grepping transcripts.
+**Why clients love it (🪑).** The knowledge is already captured, but it's scattered
+across five panels. One bar to interrogate the whole office turns "go dig through
+tabs" into "ask a question." It's the shortest path from *something happened* to
+*here's exactly what, and why.*
 
-**The edge (✨).** Every competitor shows you a log. Nobody lets you *re-watch the
-office.* The floor is our unfair advantage — this is the feature that makes the
-visualization indispensable instead of decorative.
+**The edge (✨).** Per-store memory search exists; nobody offers a single
+natural-language interface that *fuses* memory + event log + cost across the whole
+roster and answers with citations you can click. The hive is the corpus — this
+makes it queryable like a teammate you can just ask.
 
-**How it fits.** We already have the **append-only event log** (`hive.ts`) — the
-DVR is a deterministic replay of that log into the existing Pixi scene's avatar
-state machine. No new data plane; we're rendering history we already record. The
-scrubber reads the same events the live floor consumes; "playback mode" just
-swaps the event source from live → seeked.
+**How it fits.** We already ship the semantic **MemPalace** + text search, the
+**append-only event log**, the **blackboard**, and the **cost ledger**.
+Ask-the-Office is a retrieval layer that fans a query across those sources and has
+GOD compose a cited answer. It degrades to plain text search when the semantic
+index isn't installed — the same graceful-degradation contract we already honor.
 
-**Effort / risk.** Medium. Main work is a clean separation between "live event
-feed" and "seekable event source," plus snapshotting roster/board state at
-intervals so seeking is O(1) instead of replaying from zero.
+**Effort / risk.** Medium. Mostly retrieval plumbing + answer synthesis; the data
+and the search primitives already exist.
 
 ---
 
@@ -137,55 +138,60 @@ per-agent model selector + budget we already ship. Ships as data, not code.
 
 ---
 
-## 5. Daily Standup & End-of-Day digest 🪑✨
+## 5. Hiring Fair — describe the job, GOD staffs the team 🪑✨
 
-**What it is.** On a schedule (reusing the **Schedules** tab), GOD composes a
-plain-English briefing: *what each agent shipped, what's blocked, what it spent,
-what's waiting on you.* Delivered as a desktop notification, written to the
-blackboard, and optionally pushed to Slack via the ingress we already run.
+**What it is.** A one-line goal box: *"Ship a fix for the failing checkout flow
+and write the release notes."* GOD proposes a **staffing plan** — which personas
+(#4) to hire, which repos/worktrees, which models and budgets, in what order, with
+dependencies — rendered as a reviewable **Org Chart** you tweak and approve. One
+click spawns the team.
 
-**Why clients love it (🪑).** The whole pitch is "agents work while you sleep."
-The missing half is *waking up to a readable summary instead of a wall of
-terminals.* A standup is exactly the artifact a manager wants — and it's the
-office metaphor's most natural ritual.
+**Why clients love it (🪑).** The hardest part of any multi-agent tool is knowing
+how to set it up for a given job. This inverts it: state the *outcome*, get a
+sensible team. New users get a working office on their first try; experts skip the
+manual roster-building entirely.
 
-**The edge (✨).** Competitors give you logs and dashboards; we give you a
-manager's morning briefing authored by the orchestrator that actually ran the
-work. It also closes the loop on cost: the digest cites the **cost ledger**, so
-spend shows up in the same place as progress.
+**The edge (✨).** Auto-staffing *from intent* doesn't exist in agent harnesses —
+they make you assemble the team yourself. Sitting on top of Personas (#4) and Org
+Charts (#2), it turns Munder Difflin into something that *forms its own org* around
+the work in front of it.
 
-**How it fits.** Scheduled mission → GOD reads the **event log + task board + cost
-ledger** → emits a summary to notifications + blackboard + Slack. Every input
-already exists; this is a prompt + a delivery fan-out.
+**How it fits.** GOD already routes and assigns. Hiring Fair extends that to roster
+*proposal*: GOD reads the goal + available personas + registered repos and emits an
+Org Chart spec (#2's format), shown in the same reviewable picker. Spawning reuses
+the existing add-agent + worktree path. Human approval stays mandatory before any
+agent spins up.
 
-**Effort / risk.** Low-medium. Mostly prompt design and a delivery adapter we
-mostly have.
+**Effort / risk.** Medium. Prompt + a plan → Org-Chart serializer; everything
+downstream already exists.
 
 ---
 
-## 6. Plain-language guardrails 🪑
+## 6. Memory Inspector — the agent's brain, and you can edit it 🪑✨
 
-**What it is.** A natural-language rules box: *"Don't spend more than $5 today.
-Never force-push to main. Ask me before touching the billing repo. Stop any
-agent that loops more than 3 times."* It compiles to concrete **circuit-breaker**
-and **HITL-gate** rules, shown back to you as a confirmable list before they arm.
+**What it is.** A per-agent **brain** panel: browse long-term memory as readable
+cards, **pin** the things that must never be forgotten, **correct** a wrong belief
+inline, and **forget** entries that are stale or mistaken. See what the
+**MemoryReflector** condensed — and undo a bad condensation.
 
-**Why clients love it (🪑).** The breaker and budgets are powerful but live behind
-settings. Letting people state intent in English — and *showing the compiled
-rules* — makes safety approachable for non-experts and fast for experts. It lowers
-the trust barrier to actually leaving agents unattended.
+**Why clients love it (🪑).** Agents act on what they remember. When one is
+confidently wrong (*"the deploy command is X"* — it isn't), today you can't easily
+fix the belief and it keeps biting. Editable memory turns a frustrating recurring
+mistake into a five-second correction.
 
-**The edge.** Turns our safety stack (steer → constrain → stop ladder, budgets,
-HITL gate) into something a first-time user can configure in one sentence.
+**The edge (✨).** Memory is usually a black box. A first-class, human-editable
+memory with pin / correct / forget — plus visibility into what the Reflector
+condensed — is a real trust differentiator. It's the difference between *hoping*
+the agent learns and *teaching* it.
 
-**How it fits.** We already have the **cost/runaway circuit breaker**, **per-agent
-budgets**, and the **HITL gate** driven through hook returns. This is a small
-NL → rules compiler in front of existing knobs, with a human-readable preview so
-nothing arms silently.
+**How it fits.** We already keep markdown-first per-agent long-term memory, a
+searchable semantic palace, and the **MemoryReflector** that condenses over time.
+The Inspector is a CRUD + pin/forget UI over that store, with edits flowing back
+through the same write path the agents use. Pins are honored by the Reflector so
+they survive condensation.
 
-**Effort / risk.** Medium. Keep it safe-by-construction: the compiler only emits
-from a fixed rule vocabulary, and every rule is shown for confirmation — no
-free-form code execution.
+**Effort / risk.** Medium. UI + safe edit/forget operations; the store and search
+already exist.
 
 ---
 
@@ -216,80 +222,89 @@ false-positive nagging; start conservative (same file, both writing).
 
 ---
 
-## 8. Pocket Office — remote approvals & dispatch 🪑
+## 8. Spend Forecast — see the bill before you commit, watch it burn down 🪑
 
-**What it is.** Act on the office from your phone: get a push when GOD escalates,
-**approve/deny from the notification**, read the standup, and fire a quick
-dispatch ("have someone look at the failing deploy") — all without opening the
-desktop app.
+**What it is.** Before you dispatch a mission, GOD estimates **tokens, dollars,
+and wall-clock** from the cost ledger's history of similar past work, and shows a
+range. While it runs, a live **burn-down** projects final spend against the
+estimate and flags drift early — long before the breaker has to trip.
 
-**Why clients love it (🪑).** Agents run for hours; you don't sit at the machine
-the whole time. The bottleneck for true autonomy is *you being reachable for the
-one approval that matters.* Remote approvals remove the leash without removing
-control.
+**Why clients love it (🪑).** The number-one anxiety with autonomous agents is the
+surprise bill. A believable up-front estimate and a live "on track / running hot"
+projection replace dread with a number. People delegate bigger jobs when they can
+see the cost coming.
 
-**The edge.** "Agents that work while you're away" only pays off if you can
-unblock them from away. This makes the unattended pitch real.
+**The edge.** The breaker stops runaways *reactively*; this is *predictive* — it
+forecasts spend before and during, from your own historical ledger, not a static
+price sheet. Cost foresight, not just cost limits.
 
-**How it fits.** We already expose local endpoints through **tunnelmole** for
-Slack/webhook ingress, and we already have an **approvals queue** + **desktop
-notifications**. Pocket Office is: escalation → push/Slack with action buttons →
-the button hits the existing approve/deny endpoint over the tunnel. Slack
-interactive messages are the fastest v1 (no app-store build needed).
+**How it fits.** We already ship a durable **cost ledger**, real per-agent/session
+token telemetry, and **OTel** per-model cost attribution. Spend Forecast reads the
+ledger for comparable tasks to estimate, and the live OTel stream to project
+burn-down. It feeds the same budgets / breaker we already have.
 
-**Effort / risk.** Medium. v1 = Slack action buttons (cheap, leverages ingress);
-native push is a later, larger step.
-
----
-
-## 9. Voice dispatch — "Hey Michael…" 🪑✨
-
-**What it is.** Push-to-talk (or a wake phrase) to the GOD orchestrator: *"Michael,
-have someone fix the failing CI on the api repo and tell me when it's green."*
-Transcribed locally, handed to GOD, and you watch the floor react. GOD can talk
-back through the standup/notification channel.
-
-**Why clients love it (🪑).** When your hands are on the keyboard writing code,
-the fastest way to delegate is to *say it.* Talking to a manager rather than
-filling in dispatch forms is the most natural interface the office metaphor
-implies.
-
-**The edge (✨).** A voice-driven *multi-agent office* doesn't exist anywhere. It's
-the most demo-able, "whoa" feature on the list and it's a clean fit: we already
-have a single natural-language entry point — GOD — so voice is just a new input
-modality into a route that exists.
-
-**How it fits.** Local/STT transcription → text → existing **GOD dispatch** path.
-No new orchestration; GOD already accepts natural language and routes. Optional
-TTS on the digest for spoken replies.
-
-**Effort / risk.** Medium. STT integration + a press-to-talk affordance. Keep it
-optional and local-first for privacy.
+**Effort / risk.** Medium. The estimate improves with data; start with simple
+per-task-type averages and honest confidence ranges.
 
 ---
 
-## 10. Office Cam — shareable replay export ✨
+## 9. Autopilot Dial — one control for how much the office decides on its own 🪑
 
-**What it is.** "Export clip" turns a slice of the **Office DVR** (#1) into a
-sped-up, shareable video — your agents shipping a feature in 20 seconds, envelopes
-flying, the breaker catching a runaway — watermarked and ready for social.
+**What it is.** A single, legible dial — **Observe / Assist / Autopilot** — per
+agent or floor-wide:
+- **Observe** — nothing acts without you.
+- **Assist** — agents handle the routine, escalate anything with side effects.
+- **Autopilot** — GOD resolves everything it safely can and only wakes you for the
+  truly critical.
 
-**Why clients love it.** People *want* to show off their swarm. Giving them a
-one-click, genuinely cool artifact scratches that itch — and it's how the product
-spreads. The floor is already beautiful; let people post it.
+The current posture is always visible on the floor.
 
-**The edge (✨).** A built-in viral loop. Every shared Office Cam clip is an ad for
-the product, and the visual floor is the only harness that has something worth
-filming. It also doubles as a *changelog artifact* — drop a clip in a PR to show
-what the agents did.
+**Why clients love it (🪑).** Trust is earned gradually. A clear dial lets people
+start cautious and turn autonomy up as they get comfortable — without hunting
+through breaker settings and HITL toggles. It makes "how much leash" a one-gesture
+decision.
 
-**How it fits.** Builds directly on the DVR (#1): render the seeked event range to
-an offscreen Pixi canvas at high speed, capture frames, encode to mp4/webm. We
-already produce marketing footage of the floor — this productizes that pipeline
-for users.
+**The edge.** GOD already escalates "only critical items," and the breaker has a
+steer → constrain → stop ladder — but the *posture* is implicit and scattered.
+Surfacing it as one named dial (and showing it on the floor) is the legible
+front-end that makes the whole safety stack approachable.
 
-**Effort / risk.** Medium, and *gated on #1* — ship the DVR first, then this is a
-mostly-mechanical capture/encode pass.
+**How it fits.** A preset over existing controls: the **HITL gate**, escalation
+thresholds, and breaker aggressiveness. Each dial position maps to a known
+configuration of knobs we already have — no new enforcement, just a unified
+front-end and a floor indicator.
+
+**Effort / risk.** Low-medium. Mostly mapping presets to existing settings + a
+visible indicator.
+
+---
+
+## 10. Suggestion Box — idle agents that pitch in instead of sitting still ✨
+
+**What it is.** When an agent finishes early or notices something off-task — flaky
+tests, a stale TODO, a security smell, a doc that's drifted — it drops a
+**low-priority suggestion** into a Suggestion Box queue (*"I noticed X; want me to
+fix it?"*). You triage with a tap: **approve**, **dismiss**, or **snooze**.
+Nothing acts without your nod.
+
+**Why clients love it (🪑✨).** Agents currently go idle between assignments; this
+turns slack time into a stream of vetted, opt-in improvements — the
+proactive-but-safe behavior people wish their tools had. It surfaces work you
+didn't know to ask for, without ever acting unprompted.
+
+**The edge (✨).** Harnesses are reactive — they do what you dispatch. An office
+that *proposes* its own work (gated by your approval) is a different posture
+entirely, and it's pure upside: idle compute becomes a backlog of suggestions
+instead of a wasted seat.
+
+**How it fits.** Agents already write to outboxes and the blackboard, and
+idle/inbox wakeups already exist. Suggestions are a new low-priority message class
+routed to a Suggestion Box surface (a filtered view of the **approvals queue**),
+so nothing executes until you promote one to a task — which then flows through the
+normal dispatch + Kanban path.
+
+**Effort / risk.** Medium. Needs guardrails so suggestions stay useful and rare
+(rate-limit, dedupe), and they must never auto-execute.
 
 ---
 
@@ -297,16 +312,17 @@ mostly-mechanical capture/encode pass.
 
 ```
             Nobody-else-has-this  ▲
-                                  │   9 Voice          1 Office DVR
-                                  │        ✨               ✨
-                                  │   4 Cast      7 Huddle    10 Office Cam
-                                  │     🪑✨        🪑✨            ✨
-                                  │           5 Standup
-                                  │              🪑✨
-                                  │   6 Guardrails
-                                  │       🪑      3 Drag-assign
-                                  │                  🪑     8 Pocket Office
-                                  │                            🪑
+                                  │   1 Ask-the-Office     6 Memory Inspector
+                                  │        🪑✨                  🪑✨
+                                  │   10 Suggestion Box   5 Hiring Fair
+                                  │          ✨               🪑✨
+                                  │   4 Cast        7 Huddle
+                                  │     🪑✨          🪑✨
+                                  │
+                                  │   9 Autopilot Dial
+                                  │       🪑        3 Drag-assign
+                                  │                   🪑     8 Spend Forecast
+                                  │                              🪑
                                   │              2 Org Charts
                                   │                  🪑
                                   └──────────────────────────────────►
@@ -316,23 +332,26 @@ mostly-mechanical capture/encode pass.
 **If we ship in waves:**
 
 1. **Quick wins (low effort, high daily value):** 2 Org Charts → 4 Office Cast →
-   3 Drag-to-Assign → 5 Standup digest. Mostly config and renderer glue on top of
+   9 Autopilot Dial → 3 Drag-to-Assign. Config, presets, and renderer glue over
    plumbing we already have; visibly better within a release.
-2. **The signature bet:** 1 Office DVR → 10 Office Cam. This is the pair that makes
-   the floor *the reason* to use Munder Difflin instead of a CLI. Do them together.
-3. **Trust & reach:** 6 Plain-language guardrails → 8 Pocket Office → 7 Conflict
-   Huddle. These are what let people actually leave the office running unattended.
-4. **The flex:** 9 Voice dispatch. Smaller surface than it sounds (one NL entry
-   point already exists), outsized demo value.
+2. **The knowledge layer (the signature bet):** 1 Ask-the-Office → 6 Memory
+   Inspector. Make the hive's accumulated knowledge *legible and correctable* —
+   this is the pair that makes Munder Difflin the place you stay, not a CLI.
+3. **Trust & cost:** 8 Spend Forecast → 7 Conflict Huddle. These are what let
+   people delegate the bigger, scarier jobs unattended.
+4. **The flex:** 5 Hiring Fair → 10 Suggestion Box. The office staffs itself for
+   the work and pitches its own improvements — the "whoa" demos that sit cleanly
+   on everything above.
 
 ---
 
 ### Also considered (next round)
 
-- **Performance Reviews** — per-agent scorecards (success rate, $/task, tokens,
-  rework) rendered as an on-theme "annual review." Great retro material; folds
-  naturally into the cost ledger + event log.
-- **Dry-run / "What-if" approvals** — agents plan and show a diff + cost estimate
-  before executing, gated by the HITL queue. Pairs with #6.
-- **Watercooler** — agents proactively post reusable learnings to the shared
-  MemPalace so the team gets smarter over time, not just per-session.
+- **Undo / Time-machine** — one-click, git-backed revert of an agent's last change
+  across its worktree when it goes wrong. Pairs with #7.
+- **Office Hours / quiet mode** — define when agents may work and spend (throttle
+  overnight, "do not disturb" windows where escalations queue silently). Builds on
+  the Schedules tab + breaker.
+- **Take the wheel** — drop into any agent's session to drive manually, then hand
+  back with GOD re-briefing the agent on what you changed. Builds on the command
+  bar + mid-run steer.
