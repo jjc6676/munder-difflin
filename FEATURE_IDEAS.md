@@ -18,46 +18,47 @@
 
 | # | Feature | Bucket | One-liner |
 |---|---|---|---|
-| 1 | Ask-the-Office | 🪑✨ | One plain-English search bar over every agent's memory, the event log, and the cost ledger — with clickable provenance. |
+| 1 | The Interview — best-of-N tryouts | ✨ | Give the same task to 3 candidate agents in parallel worktrees, compare side-by-side, hire the winner. |
 | 2 | Team Templates ("Org Charts") | 🪑 | Save a whole roster + repos + prompts and re-spawn the team in one click. |
 | 3 | Drag-to-Assign on the floor | 🪑 | Drag an issue, a task card, or a file onto an avatar to give it the work. |
 | 4 | The Office Cast — persona presets | 🪑✨ | One-click personalities (Dwight the bug-hunter, Oscar the reviewer) that are really tuned prompt+model+guardrail bundles. |
-| 5 | Hiring Fair — auto-staffing | 🪑✨ | Describe the job in one line; GOD proposes who to hire, with what models and budgets, and you approve. |
-| 6 | Memory Inspector | 🪑✨ | Browse, pin, correct, and forget what an agent knows — teach it instead of hoping. |
+| 5 | Assembly Line — review-gated pipelines | 🪑✨ | Chain agents into write → review → document lines where work physically can't skip a sign-off. |
+| 6 | Done Means Done — proof-gated tasks | 🪑 | A task card can't move to *done* until its proof command passes; every done card ships with a receipt. |
 | 7 | Conflict Huddle — collision detection | 🪑✨ | When two agents touch the same files, they're pulled into a huddle to reconcile before they clobber each other. |
-| 8 | Spend Forecast | 🪑 | See the estimated bill before you commit, then watch a live burn-down flag drift early. |
-| 9 | Autopilot Dial | 🪑 | One Observe / Assist / Autopilot control for how much the office decides on its own. |
-| 10 | Suggestion Box | ✨ | Idle agents file vetted, opt-in improvements you triage with a tap — nothing acts unprompted. |
+| 8 | The Vault — secrets desk | 🪑 | Agents request credentials, you approve, secrets are injected scoped and redacted from every log. |
+| 9 | Clock Out — pause the whole office | 🪑 | One click safely freezes every agent at a clean boundary; one click resumes with each agent re-briefed. |
+| 10 | Branch Offices — federated hives | ✨ | Link two offices — your desktop and a teammate's — so their agents exchange mail like one company. |
 
 ---
 
-## 1. Ask-the-Office — one search bar over everything the office knows 🪑✨
+## 1. The Interview — best-of-N tryouts ✨
 
-**What it is.** A global command-palette **Ask** box that answers plain-English
-questions across every agent's long-term memory, the append-only event log, the
-blackboard, and the cost ledger at once: *"Who touched the auth module yesterday
-and why?"* · *"What did Dwight learn about the flaky tests?"* · *"Where did we
-spend the most this week?"* Answers come back with **clickable provenance** —
-which agent, which event, which file — so you can jump straight to the source.
+**What it is.** Right-click a task → **"Interview candidates."** The harness spawns
+2–4 agents — different personas, models, or prompts — each in its **own isolated
+worktree**, all working the *same* task in parallel. When they finish, you get a
+side-by-side comparison: the diffs, whether each one's tests pass, what each cost,
+and how long each took — plus a short GOD-written verdict. Click **Hire** on the
+winner (its branch is kept and its approach noted to memory); the rest are archived.
 
-**Why clients love it (🪑).** The knowledge is already captured, but it's scattered
-across five panels. One bar to interrogate the whole office turns "go dig through
-tabs" into "ask a question." It's the shortest path from *something happened* to
-*here's exactly what, and why.*
+**Why clients love it.** "Which model/prompt should I use for this?" is unanswerable
+in the abstract — so let them *compete on the actual task*. For anything important,
+best-of-3 beats best-guess, and the side-by-side makes the choice obvious instead
+of theoretical.
 
-**The edge (✨).** Per-store memory search exists; nobody offers a single
-natural-language interface that *fuses* memory + event log + cost across the whole
-roster and answers with citations you can click. The hive is the corpus — this
-makes it queryable like a teammate you can just ask.
+**The edge (✨).** Other tools run agents in parallel; nobody runs them in parallel
+**on the same task as a structured competition** with a hire/archive decision at the
+end. It's also the most honest eval loop there is: your repo, your task, real diffs —
+not a benchmark.
 
-**How it fits.** We already ship the semantic **MemPalace** + text search, the
-**append-only event log**, the **blackboard**, and the **cost ledger**.
-Ask-the-Office is a retrieval layer that fans a query across those sources and has
-GOD compose a cited answer. It degrades to plain text search when the semantic
-index isn't installed — the same graceful-degradation contract we already honor.
+**How it fits.** Per-agent **git worktrees** already guarantee candidates can't
+collide. The **per-agent model selector**, **cost telemetry**, and **archival**
+already exist — the comparison view is assembled from the diff (git tab plumbing),
+the proof run (#6), and the cost ledger. GOD writes the verdict the same way it
+adjudicates today.
 
-**Effort / risk.** Medium. Mostly retrieval plumbing + answer synthesis; the data
-and the search primitives already exist.
+**Effort / risk.** Medium. The spawn-N-and-compare orchestration is new; everything
+it composes already ships. Cost multiplies by N — surface that clearly up front and
+default candidates to cheaper models.
 
 ---
 
@@ -138,60 +139,65 @@ per-agent model selector + budget we already ship. Ships as data, not code.
 
 ---
 
-## 5. Hiring Fair — describe the job, GOD staffs the team 🪑✨
+## 5. Assembly Line — review-gated pipelines 🪑✨
 
-**What it is.** A one-line goal box: *"Ship a fix for the failing checkout flow
-and write the release notes."* GOD proposes a **staffing plan** — which personas
-(#4) to hire, which repos/worktrees, which models and budgets, in what order, with
-dependencies — rendered as a reviewable **Org Chart** you tweak and approve. One
-click spawns the team.
+**What it is.** Wire personas into a **production line**: Dwight implements →
+Oscar reviews → Pam documents → ship. Each station is a real gate — when Dwight
+finishes, his diff is automatically mailed to Oscar; the task card physically
+cannot advance until Oscar **approves** (his approval is a structured hive
+message, not vibes). A rejected handoff bounces back with Oscar's notes attached.
+On the floor you *see* the line: the envelope moves desk → desk → desk, and the
+card walks the Kanban columns in lockstep.
 
-**Why clients love it (🪑).** The hardest part of any multi-agent tool is knowing
-how to set it up for a given job. This inverts it: state the *outcome*, get a
-sensible team. New users get a working office on their first try; experts skip the
-manual roster-building entirely.
+**Why clients love it (🪑).** Today, multi-step quality control means manually
+re-dispatching between agents and hoping nothing skips a step. A line you define
+once — and then just feed tasks into — is how people actually want to run repeated
+work (features, bug fixes, release notes). Set up the line, then it's drag-and-drop
+(#3) into the *front* of it.
 
-**The edge (✨).** Auto-staffing *from intent* doesn't exist in agent harnesses —
-they make you assemble the team yourself. Sitting on top of Personas (#4) and Org
-Charts (#2), it turns Munder Difflin into something that *forms its own org* around
-the work in front of it.
+**The edge (✨).** Everyone has parallel agents. **Sequenced agents with enforced
+sign-off gates between them** — where the harness, not the prompt, enforces the
+sequence — is real separation. It converts "a bunch of agents" into an actual
+process, which is what teams buy.
 
-**How it fits.** GOD already routes and assigns. Hiring Fair extends that to roster
-*proposal*: GOD reads the goal + available personas + registered repos and emits an
-Org Chart spec (#2's format), shown in the same reviewable picker. Spawning reuses
-the existing add-agent + worktree path. Human approval stays mandatory before any
-agent spins up.
+**How it fits.** The Kanban already has **dependencies**; the hive already
+routes structured messages between agents; the **HITL gate** already blocks on
+hook returns. A line is a task-template whose stages auto-create dependent cards
+assigned to the right personas (#4), with the router carrying the diff at each
+handoff. The floor animation reuses the existing envelope flight.
 
-**Effort / risk.** Medium. Prompt + a plan → Org-Chart serializer; everything
-downstream already exists.
+**Effort / risk.** Medium. The state machine (advance / reject / bounce-with-notes)
+needs care, but every primitive it composes is shipping today.
 
 ---
 
-## 6. Memory Inspector — the agent's brain, and you can edit it 🪑✨
+## 6. Done Means Done — proof-gated tasks 🪑
 
-**What it is.** A per-agent **brain** panel: browse long-term memory as readable
-cards, **pin** the things that must never be forgotten, **correct** a wrong belief
-inline, and **forget** entries that are stale or mistaken. See what the
-**MemoryReflector** condensed — and undo a bad condensation.
+**What it is.** Every task card gets an optional **proof** — a command that must
+exit green (`npm run typecheck`, `npm test`, a build) before the card is *allowed*
+to move to **done**. The **harness** runs the proof in the agent's worktree; the
+agent's claim of "finished!" doesn't count. Failed proof bounces the card back to
+*doing* with the failing output attached. Every card that does land in done carries
+a **receipt**: the diff summary, the proof output, tokens spent, dollars, and
+wall-clock — assembled automatically.
 
-**Why clients love it (🪑).** Agents act on what they remember. When one is
-confidently wrong (*"the deploy command is X"* — it isn't), today you can't easily
-fix the belief and it keeps biting. Editable memory turns a frustrating recurring
-mistake into a five-second correction.
+**Why clients love it (🪑).** The #1 trust-killer with agents is being told a task
+is done when it isn't. Making *done* a verified state — enforced by the harness,
+not the model's self-report — is the single biggest upgrade to "can I actually walk
+away?" And the receipt answers the follow-up question ("what did that cost me?")
+before it's asked.
 
-**The edge (✨).** Memory is usually a black box. A first-class, human-editable
-memory with pin / correct / forget — plus visibility into what the Reflector
-condensed — is a real trust differentiator. It's the difference between *hoping*
-the agent learns and *teaching* it.
+**The edge.** Competing tools treat the agent's final message as the result. We
+treat it as a *claim* that gets checked. "Done means done" is a one-sentence pitch
+that every burned agent user immediately understands.
 
-**How it fits.** We already keep markdown-first per-agent long-term memory, a
-searchable semantic palace, and the **MemoryReflector** that condenses over time.
-The Inspector is a CRUD + pin/forget UI over that store, with edits flowing back
-through the same write path the agents use. Pins are honored by the Reflector so
-they survive condensation.
+**How it fits.** The Kanban tracks status; **worktrees** give a clean place to run
+the proof; the PTY layer can already spawn commands; the **cost ledger + event
+log** supply the receipt's numbers; the **CI watcher** pattern extends naturally
+to local proof runs. Bounce-backs reuse the existing work-order handoff.
 
-**Effort / risk.** Medium. UI + safe edit/forget operations; the store and search
-already exist.
+**Effort / risk.** Low-medium. Run-command-and-gate is straightforward; the main
+design choice is sensible default proofs per repo (e.g. detect `npm run typecheck`).
 
 ---
 
@@ -222,89 +228,95 @@ false-positive nagging; start conservative (same file, both writing).
 
 ---
 
-## 8. Spend Forecast — see the bill before you commit, watch it burn down 🪑
+## 8. The Vault — secrets desk 🪑
 
-**What it is.** Before you dispatch a mission, GOD estimates **tokens, dollars,
-and wall-clock** from the cost ledger's history of similar past work, and shows a
-range. While it runs, a live **burn-down** projects final spend against the
-estimate and flags drift early — long before the breaker has to trip.
+**What it is.** A locked drawer for credentials. You register secrets (API keys,
+tokens) once, in the main process. When an agent needs one, it *asks* — a request
+lands in the approvals queue ("Dwight wants `STRIPE_TEST_KEY` for repo X"). On
+approval, the secret is injected into **that agent's** environment, scoped to that
+session — and the live terminal stream + logs **redact the value** everywhere it
+appears. Per-persona policy too: *Creed never gets secrets* (see #4).
 
-**Why clients love it (🪑).** The number-one anxiety with autonomous agents is the
-surprise bill. A believable up-front estimate and a live "on track / running hot"
-projection replace dread with a number. People delegate bigger jobs when they can
-see the cost coming.
+**Why clients love it (🪑).** Today the honest answer to "how do I give an agent an
+API key?" is *paste it somewhere and hope* — it ends up in shell history, transcripts,
+memory files. A request → approve → scoped-inject → redact flow removes the most
+uncomfortable moment in agent adoption. It's the feature security-conscious teams
+ask about before anything else.
 
-**The edge.** The breaker stops runaways *reactively*; this is *predictive* — it
-forecasts spend before and during, from your own historical ledger, not a static
-price sheet. Cost foresight, not just cost limits.
+**The edge.** Local-first harnesses ignore this entirely. A built-in, visible,
+auditable secrets path ("every grant is in the event log") is a serious-tool
+signal that pairs with the playful floor instead of fighting it.
 
-**How it fits.** We already ship a durable **cost ledger**, real per-agent/session
-token telemetry, and **OTel** per-model cost attribution. Spend Forecast reads the
-ledger for comparable tasks to estimate, and the live OTel stream to project
-burn-down. It feeds the same budgets / breaker we already have.
+**How it fits.** The main process already owns the PTYs (env injection at spawn
+or via session restart), the **approvals queue** already handles grant/deny, the
+**SQLite durable store** can hold the encrypted vault (OS-keychain wrapped), and
+redaction is a filter on the existing `pty:data:<id>` stream + transcript writes.
 
-**Effort / risk.** Medium. The estimate improves with data; start with simple
-per-task-type averages and honest confidence ranges.
-
----
-
-## 9. Autopilot Dial — one control for how much the office decides on its own 🪑
-
-**What it is.** A single, legible dial — **Observe / Assist / Autopilot** — per
-agent or floor-wide:
-- **Observe** — nothing acts without you.
-- **Assist** — agents handle the routine, escalate anything with side effects.
-- **Autopilot** — GOD resolves everything it safely can and only wakes you for the
-  truly critical.
-
-The current posture is always visible on the floor.
-
-**Why clients love it (🪑).** Trust is earned gradually. A clear dial lets people
-start cautious and turn autonomy up as they get comfortable — without hunting
-through breaker settings and HITL toggles. It makes "how much leash" a one-gesture
-decision.
-
-**The edge.** GOD already escalates "only critical items," and the breaker has a
-steer → constrain → stop ladder — but the *posture* is implicit and scattered.
-Surfacing it as one named dial (and showing it on the floor) is the legible
-front-end that makes the whole safety stack approachable.
-
-**How it fits.** A preset over existing controls: the **HITL gate**, escalation
-thresholds, and breaker aggressiveness. Each dial position maps to a known
-configuration of knobs we already have — no new enforcement, just a unified
-front-end and a floor indicator.
-
-**Effort / risk.** Low-medium. Mostly mapping presets to existing settings + a
-visible indicator.
+**Effort / risk.** Medium. Redaction is best-effort by nature (an agent could
+transform a secret before printing it) — document that honestly; scoping +
+auditing is the real win.
 
 ---
 
-## 10. Suggestion Box — idle agents that pitch in instead of sitting still ✨
+## 9. Clock Out — pause the whole office 🪑
 
-**What it is.** When an agent finishes early or notices something off-task — flaky
-tests, a stale TODO, a security smell, a doc that's drifted — it drops a
-**low-priority suggestion** into a Suggestion Box queue (*"I noticed X; want me to
-fix it?"*). You triage with a tap: **approve**, **dismiss**, or **snooze**.
-Nothing acts without your nod.
+**What it is.** One button: **Clock Out**. Every agent is brought to a clean
+stop at its next safe boundary (hook return / turn end, not `SIGKILL` mid-write),
+in-flight mail stays queued, the roster and task states snapshot, and the floor
+dims to "after hours." Later — same machine, after a reboot, on battery in a café —
+hit **Clock In**: the team respawns (existing restore path) and each agent gets an
+automatic re-brief ("here's the task you were on, here's the last thing you did")
+built from its memory and the event log.
 
-**Why clients love it (🪑✨).** Agents currently go idle between assignments; this
-turns slack time into a stream of vetted, opt-in improvements — the
-proactive-but-safe behavior people wish their tools had. It surfaces work you
-didn't know to ask for, without ever acting unprompted.
+**Why clients love it (🪑).** Real life interrupts: laptop lid closes, meeting
+starts, battery dies. Today that means killing sessions and reconstructing context
+by hand. A safe pause that *keeps the office's place* removes the anxiety tax on
+running a big roster — you can walk away mid-mission without losing the mission.
 
-**The edge (✨).** Harnesses are reactive — they do what you dispatch. An office
-that *proposes* its own work (gated by your approval) is a different posture
-entirely, and it's pure upside: idle compute becomes a backlog of suggestions
-instead of a wasted seat.
+**The edge.** "Suspend the whole multi-agent operation and resume it cold" is an
+operational feature competitors don't have because they don't persist enough to
+attempt it. We already persist most of it — this finishes the thought.
 
-**How it fits.** Agents already write to outboxes and the blackboard, and
-idle/inbox wakeups already exist. Suggestions are a new low-priority message class
-routed to a Suggestion Box surface (a filtered view of the **approvals queue**),
-so nothing executes until you promote one to a task — which then flows through the
-normal dispatch + Kanban path.
+**How it fits.** **Graceful stop** via hook returns exists; **session IDs, window
+state, and the cost ledger already persist** in the durable store; **Restore team**
+already respawns a roster. Clock Out chains them: graceful-stop-all → snapshot →
+(later) restore-all + a GOD-composed re-brief mailed to each agent from the
+event log. The "after hours" floor state is a small scene treatment.
 
-**Effort / risk.** Medium. Needs guardrails so suggestions stay useful and rare
-(rate-limit, dedupe), and they must never auto-execute.
+**Effort / risk.** Low-medium. Highest-leverage glue feature on the list — almost
+every component exists; the new work is the orchestrated sequence + re-brief.
+
+---
+
+## 10. Branch Offices — federated hives ✨
+
+**What it is.** Link two offices into one company. Your desktop's hive and a
+teammate's (or your laptop's) exchange mail: agents address `oscar@scranton` or
+`dwight@stamford`, envelopes fly to the door and "arrive" on the other floor, and
+each office's GOD coordinates with the other on shared tasks. Cross-office
+escalations land in *both* approval queues; the shared blackboard syncs.
+
+**Why clients love it.** The moment two people on a team both run Munder Difflin,
+the obvious question is "can my agents talk to yours?" Today the answer is no.
+Branch Offices turns a single-player tool into a team tool — *my* docs agent can
+ask *your* backend agent a question overnight — without anyone standing up a server.
+
+**The edge (✨).** Multi-human, multi-agent, peer-to-peer, **no cloud middleman**.
+Every competitor doing "team agents" routes through their SaaS. Our hive is already
+**a local git repo of plain files with a single-committer router** — which means
+federation can literally be a git remote: offices push/pull hive state, and the
+router treats remote agents as one more inbox to deliver to. The architecture was
+accidentally built for this.
+
+**How it fits.** The hive's git-backed, file-based design is the whole trick:
+add a remote, namespace agents by office, and extend the router's delivery table
+with remote inboxes. The **tunnelmole ingress** we already run covers the
+NAT-traversal story for live nudges between syncs. Single-committer-per-office
+preserves the no-`index.lock` guarantee.
+
+**Effort / risk.** High — this is the moonshot. Conflict semantics, identity, and
+trust between offices need real design. But it's the feature that changes what the
+product *is*, and the on-disk architecture gives us a head start nobody else has.
 
 ---
 
@@ -312,17 +324,17 @@ normal dispatch + Kanban path.
 
 ```
             Nobody-else-has-this  ▲
-                                  │   1 Ask-the-Office     6 Memory Inspector
-                                  │        🪑✨                  🪑✨
-                                  │   10 Suggestion Box   5 Hiring Fair
-                                  │          ✨               🪑✨
-                                  │   4 Cast        7 Huddle
-                                  │     🪑✨          🪑✨
-                                  │
-                                  │   9 Autopilot Dial
-                                  │       🪑        3 Drag-assign
-                                  │                   🪑     8 Spend Forecast
-                                  │                              🪑
+                                  │   10 Branch Offices    1 The Interview
+                                  │          ✨                  ✨
+                                  │   5 Assembly Line   7 Huddle
+                                  │        🪑✨            🪑✨
+                                  │   4 Cast
+                                  │     🪑✨
+                                  │                  6 Done Means Done
+                                  │   8 Vault              🪑
+                                  │     🪑       3 Drag-assign
+                                  │                  🪑     9 Clock Out
+                                  │                            🪑
                                   │              2 Org Charts
                                   │                  🪑
                                   └──────────────────────────────────►
@@ -332,16 +344,15 @@ normal dispatch + Kanban path.
 **If we ship in waves:**
 
 1. **Quick wins (low effort, high daily value):** 2 Org Charts → 4 Office Cast →
-   9 Autopilot Dial → 3 Drag-to-Assign. Config, presets, and renderer glue over
-   plumbing we already have; visibly better within a release.
-2. **The knowledge layer (the signature bet):** 1 Ask-the-Office → 6 Memory
-   Inspector. Make the hive's accumulated knowledge *legible and correctable* —
-   this is the pair that makes Munder Difflin the place you stay, not a CLI.
-3. **Trust & cost:** 8 Spend Forecast → 7 Conflict Huddle. These are what let
-   people delegate the bigger, scarier jobs unattended.
-4. **The flex:** 5 Hiring Fair → 10 Suggestion Box. The office staffs itself for
-   the work and pitches its own improvements — the "whoa" demos that sit cleanly
-   on everything above.
+   6 Done Means Done → 3 Drag-to-Assign. Config, gating, and renderer glue over
+   plumbing we already have — and "done means done" is the trust headline.
+2. **Walk-away confidence:** 9 Clock Out → 8 The Vault → 7 Conflict Huddle. The
+   set that lets people run a big roster unattended without anxiety.
+3. **The signature bet:** 5 Assembly Line → 1 The Interview. Sequenced, gated,
+   competitive agents — the floor stops being a metaphor and becomes a process.
+4. **The moonshot:** 10 Branch Offices. The git-backed hive makes federation
+   plausible for us and painful for everyone else — the feature that changes what
+   the product is.
 
 ---
 
@@ -349,9 +360,7 @@ normal dispatch + Kanban path.
 
 - **Undo / Time-machine** — one-click, git-backed revert of an agent's last change
   across its worktree when it goes wrong. Pairs with #7.
-- **Office Hours / quiet mode** — define when agents may work and spend (throttle
-  overnight, "do not disturb" windows where escalations queue silently). Builds on
-  the Schedules tab + breaker.
-- **Take the wheel** — drop into any agent's session to drive manually, then hand
-  back with GOD re-briefing the agent on what you changed. Builds on the command
-  bar + mid-run steer.
+- **"Needs You" tray** — one keyboard-driven queue unifying everything blocked on
+  the human: approvals, review gates (#5), secret requests (#8), huddles (#7).
+- **Visitor badge** — a read-only live share link to the floor so a teammate or
+  manager can watch a run without installing anything. A stepping stone to #10.
